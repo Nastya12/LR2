@@ -28,11 +28,11 @@ Matrix::Matrix(int n, int m):
 
 Matrix::Matrix(const Matrix &matrixToCopy)
 {
-    matrix_=new Data *[n_];
-    for (int i=0; i<n_; i++)
+    matrix_=new Data *[getN()];
+    for (int i=0; i<getN(); i++)
     {
         matrix_[i]=0;
-        matrix_[i]=new Data [m_];
+        matrix_[i]=new Data [getM()];
         for (int i=0; i<matrixToCopy.n_; i++)
         {
             for (int j=0; j<matrixToCopy.m_; j++)
@@ -51,6 +51,7 @@ void Matrix::clear()
     for(int i=0; i<n_; i++)
         delete matrix_[i];
     delete [] matrix_;
+      matrix_=0;
 }
 
 ostream &operator<< (ostream &output, const Matrix &obj)
@@ -116,7 +117,7 @@ Matrix Matrix::operator- (const Matrix &right)
 
 Matrix Matrix::operator* (const Matrix &right)
 {
-    if (n_!=right.n_ ||m_!=right.m_)
+    if (n_!=right.m_ ||m_!=right.n_)
     {
         cout<<"multiplication is not possible.\n";
         exit(1);
@@ -127,12 +128,29 @@ Matrix Matrix::operator* (const Matrix &right)
             for (int j=0; j<m_; j++)
             {
                 result.matrix_[i][j]=0;
-                result.matrix_[i][j]=matrix_[i][j]+matrix_[i][k]*right.matrix_[k][j];
+                result.matrix_[i][j]+=matrix_[i][k]*right.matrix_[k][j];
             }
     return result;
 }
+Matrix &Matrix::operator= (const Matrix&right)
+{
+    if(&right != this)
+    {
+        clear();
+        matrix_=new Data *[n_];
+        for (int i=0; i<n_; ++i)
+        {
+            matrix_[i]=0;
+            matrix_[i]=new Data[m_];
+        }
+        for (int i=0; i<n_ ; ++i )
+            for (int j=0; i<m_ ; j++ )
+                matrix_[i][j]=right.matrix_[i][j];
+    }
+    return *this;
+}
 
-void Matrix::generation(int &n, int &m)
+void Matrix::generation(int n, int m)
 {
 
     cout<<"matrix: \n";
@@ -146,11 +164,11 @@ void Matrix::generation(int &n, int &m)
 
 }
 
-void Matrix::output(int &n, int &m)
+void Matrix::output(int n, int m)
 {
-    for (int i=0; i<n_; i++)
+    for (int i=0; i<getN(); i++)
     {
-        for (int j=0; j<m_; j++)
+        for (int j=0; j<getM(); j++)
         {
             cout<<matrix_[i][j]<<" ";
         }
@@ -161,10 +179,10 @@ void Matrix::output(int &n, int &m)
 
 void Matrix::input(int n, int m)
 {
-    for(int i=0; i<n_; i++)
+    for(int i=0; i<getN(); i++)
     {
         cout<<"line = "<<i+1<<endl;
-        for (int j=0; j<m_; j++)
+        for (int j=0; j<getM(); j++)
         {
             cout<<matrix_[i][j];
         }
@@ -172,20 +190,6 @@ void Matrix::input(int n, int m)
     }
     cout<<"matrix: \n";
 
-}
-
-void Matrix::setN(int n)
-{
-    n_=n;
-}
-
-void  Matrix::setM(int m)
-{
-    m_=m;
-}
-Matrix addition (Matrix &A, Matrix &B)
-{
-    return A+B;
 }
 
 int Matrix::getN()
@@ -198,17 +202,8 @@ int Matrix::getM()
     return m_;
 }
 
-Matrix subtraction (Matrix &A, Matrix &B)
-{
-    return A-B;
-}
 
-Matrix multiplication (Matrix &A, Matrix &B)
-{
-    return A*B;
-}
-
-Matrix Matrix::multiplicationBy (Matrix &A, int &num)
+Matrix Matrix::multiplicationBy (int num)
 {
 
     Matrix result(n_,m_);

@@ -22,23 +22,17 @@ public:
     Matrix operator+= (const Matrix &right);
     Matrix operator- (const Matrix &rigth);
     Matrix operator* (const Matrix &right);
-    const Matrix &operator= (const Matrix &right);
+    Matrix &operator= (const Matrix &right);
     int getN();
     int getM();
-    void setN(int n);
-    void setM(int n);
-    void generation(int &n, int &m);
-    void output(int &n, int &m);
+    void generation(int n, int m);
+    void output(int n, int m);
     void input(int n, int m);
-    Matrix multiplicationBy (Matrix &A, int &num);
+    Matrix multiplicationBy (int num);
 protected:
 private:
     int n_,m_;
     Data **matrix_;
 };
-Matrix addition (Matrix &A, Matrix &B);
-Matrix subtraction (Matrix &A, Matrix &B);
-Matrix multiplication (Matrix &A, Matrix &B);
-
 
 #endif // MATRIX_H
